@@ -41,7 +41,7 @@ A new window will open, listing configured controllers. Go to _Controller Servic
 +
 image::images/canvas_controller_services_list.png[width=800]
 +
-You can review any of those Controllers configurations, but here is how we are going to use them during the labs:
+You can review any of those Controllers configurations by clicking on the service's _cog_ icon (image:images/cog_icon.png[width=20]) and go to the *Properties* tab. Here is how we are going to use them during the labs:
 
 .. *HortonworkSchemaRegistry*: allows interaction with a schema repository, and reuse those schemas in NiFi flows.
 .. *JsonRecordSetWriter*: allows NiFi to write records from the flows in JSON format.
@@ -200,22 +200,15 @@ image::images/schema_registry_list.png[width=800]
 
 In this lab, you will create a NiFi flow to receive the data from all gateways and push it to **Kafka**.
 
-=== Review Process Group configuration
+=== Versioning Process Group
 
 Before we start building our flow, let's review a Process Group already created to help organizing the flows in the NiFi canvas and also to enable flow version control.
 
-. Open the NiFi Web UI, find a Process Group called _Push to Kafka_ and double-click.
-+
-image::images/push_to_kafka_pg.png[width=800]
-+
-. You will see that the Process Group is already pre-configured with one _Input Port_ and two _Processors_. Do not care about the warning signs, we still need to make some configurations. Take a look in the bottom of the canvas. A link allows you to go back to the main canvas.
-+
-image::images/push_to_kafka_pg_detail.png[width=800]
-+
-. Back on the *NiFi* Web UI, to enable version control for the Process Group, right-click on the canvas and select *Version > Start version control* and enter the details below.
+. To enable version control, right-click on the _Push to Kafka_ process group and select *Version > Start version control*.
 +
 image::images/start_pg_versioning.png[width=800]
 +
+
 When prompted, enter the details below:
 +
 [source]
@@ -228,63 +221,29 @@ Flow Name: SensorProcessGroup
 image::images/pg_versioning_configuration.png[width=800]
 +
 
-To make sure the process group is enabled properly, go back to the main canvas (use bottom link path to navigate) and a image:images/version_control_tick.png[width=20] will appear on the Process Group, indicating that version control is now enabled for it.
+Once you complete, a image:images/version_control_tick.png[width=20] will appear on the Process Group, indicating that version control is now enabled for it.
 +
 image::images/pg_versioning_confirmation.png[width=800]
 +
-. Let's also enable processors in this Process Group to use schemas stored in Schema Registry. Right-click on the Process Group, select *Configure* and navigate to the *Controller Services* tab. Click the *`+`* icon and add a *HortonworksSchemaRegistry* service. After the service is added, click on the service's _cog_ icon (image:images/cog_icon.png[width=20]), go to the *Properties* tab and configure it with the following *Schema Registry URL* and click *Apply*.
-+
-[source]
-----
-URL: http://edge2ai-1.dim.local:7788/api/v1
-----
-+
-image::images/added_hwx_sr_service.png[width=800]
 
-. Click on the _lightning bolt_ icon (image:images/enable_icon.png[width=20]) to *enable* the *HortonworksSchemaRegistry* Controller Service.
-
-. Still on the *Controller Services* screen, let's add two additional services to handle the reading and writing of JSON records. Click on the image:images/plus_button.png[width=25] button and add the following two services:
-** *`JsonTreeReader`*, with the following properties:
-+
-[source]
-----
-Schema Access Strategy: Use 'Schema Name' Property
-Schema Registry:        HortonworksSchemaRegistry
-Schema Name:            ${schema.name} -> already set by default!
-----
-
-** *`JsonRecordSetWriter`*, with the following properties:
-+
-[source]
-----
-Schema Write Strategy:  HWX Schema Reference Attributes
-Schema Access Strategy: Inherit Record Schema
-Schema Registry:        HortonworksSchemaRegistry
-----
-
-. Enable the *JsonTreeReader* and the *JsonRecordSetWriter* Controller Services you just created, by clicking on their respective _lightning bolt_ icons (image:images/enable_icon.png[width=20]).
-+
-image::images/controller_services.png[width=800]
 
 === Creating the flow
 
-. Double-click on the newly created process group to expand it.
+. Double-click on the _Push to Kafka__ process group to expand it.
 
-. Inside the process group, add a new _Input Port_ and name it "Sensor Data"
+. You will see that the Process Group is already pre-configured with one _Input Port_ and two _Processors_. Do not care about the warning signs, we still need to make some configurations. Take a look in the bottom of the canvas. A link allows you to go back to the main canvas.
++
+image::images/push_to_kafka_pg_detail.png[width=800]
++
 
-. We need to tell NiFi which schema should be used to read and write the Sensor data. For this we'll use an _UpdateAttribute_ processor to add an attribute to the FlowFile indicating the schema name.
+. Connect the *Sensor Data* input port to the *Set Schema Name* processor. Start the *Sensor Data* input port.
 +
-Add an _UpdateAttribute_ processor by dragging the processor icon to the canvas:
+Remember you can see flow queue any time. Refresh the screen (`Ctrl+R` on Linux/Windows; `Cmd+R` on Mac) and you should see that the records that were queued on the "*Sensor Data*" Input Port disappeared. They flowed into the *Set Schema Name* processor.
 +
-image::images/add_updateattribute.png[width=800]
-
-. Double-click the _UpdateAttribute_ processor and configure it as follows:
-.. In the _SETTINGS_ tab:
+image::images/sensor_data_to_updateattribute_queue.png[width=400]
 +
-[source]
-----
-Name: Set Schema Name
-----
+. Double-click the _Set Schema Name_ processor and configure it as follows:
++
 .. In the _PROPERTIES_ tab:
 ** Click on the image:images/plus_button.png[width=25] button and add the following property:
 +
@@ -295,16 +254,10 @@ Property Value: SensorReading
 ----
 .. Click *Apply*
 
-. Connect the *Sensor Data* input port to the *Set Schema Name* processor.
+. Connect the *Set Schema Name* processor to the *Publish to Kafka topic: iot* processor. Start *Set Schema Name* processor.
 
-. Add a _PublishKafkaRecord_2.0_ processor and configure it as follows:
-+
-*SETTINGS* tab:
-+
-[source]
-----
-Name:                                  Publish to Kafka topic: iot
-----
+. Double-click the  _Publish to Kafka topic: iot_ processor and configure it as follows:
+
 +
 *PROPERTIES* tab:
 +
@@ -316,51 +269,36 @@ Record Reader:                         JsonTreeReader
 Record Writer:                         JsonRecordSetWriter
 Use Transactions:                      false
 Attributes to Send as Headers (Regex): schema.*
+client.id                              nifi-sensor-data
 ----
 +
-NOTE: Make sure you use the PublishKafkaRecord_2.0 processor and *not* the PublishKafka_2.0 one
+`client.id` will help us clearly identify who is producing data into the Kafka topic.
 
-. While still in the _PROPERTIES_ tab of the _PublishKafkaRecord_2.0_ processor, click on the image:images/plus_button.png[width=25] button and add the following property:
-+
-[source]
-----
-Property Name:  client.id
-Property Value: nifi-sensor-data
-----
-+
-Later, this will help us clearly identify who is producing data into the Kafka topic.
-
-. Connect the *Set Schema Name* processor to the *Publish to Kafka topic: iot* processor.
-
-. Add a new _Funnel_ to the canvas and connect the PublishKafkaRecord processor to it. When the "Create connection" dialog appears, select "*failure*" and click *Add*.
+. Add a  _Funnel_ to the canvas and connect the PublishKafkaRecord processor to it. When the "Create connection" dialog appears, select "*failure*" and click *Add*.
 +
 image::images/add_kafka_failure_connection.png[width=600]
 
-. Double-click on the *Publish to Kafka topic: iot* processor, go to the *SETTINGS* tab, check the "*success*" relationship in the *AUTOMATICALLY TERMINATED RELATIONSHIPS* section. Click *Apply*.
+. Double-click on the *Publish to Kafka topic: iot* processor, go to the *SETTINGS* tab, make sure the "*success*" relationship is checked in the *AUTOMATICALLY TERMINATED RELATIONSHIPS* section. Click *Apply*.
 +
 image::images/terminate_publishkafka_relationship.png[width=600]
 
-. Start the input port and the two processors. Your canvas should now look like the one below:
+. Start *Publish to Kafka topic: iot* processor. Your canvas should now look like the one below:
 +
 image::images/publishKafka_flow.png[width=800]
-
-. The only thing that remains to be configured now is to finally connect the "*from Gateway*" Input Port to the flow in the "*Processor Sensor Data*" group. To do that, first go back to the root canvas by clicking on the *NiFi Flow* link on the status bar.
 +
-image::images/breadcrumbs.png[width=400]
-
-. Connect the Input Port to the *Process Sensor Data* Process Group by dragging the destination of the current connection from the funnel to the Process Group. When prompted, ensure the "To input" fields is set to the *Sensor data* Input Port.
-+
-image::images/connect_input.png[width=800]
-+
-image::images/to_input.png[width=800]
-
-. Refresh the screen (`Ctrl+R` on Linux/Windows; `Cmd+R` on Mac) and you should see that the records that were queued on the "*from Gateway*" Input Port disappeared. They flowed into the *Process Sensor Data* flow. If you expand the Process Group you should see that those records were processed by the _PublishKafkaRecord_ processor and there should be no records queued on the "failure" output queue.
+Take a look at the _PublishKafkaRecord_ processor. You should ee those records processed and pushed to Kafka, and there should be no records queued on the "failure" output queue.
 +
 image::images/kafka_success.png[width=800]
 +
+
+. Go back to the root canvas by clicking on the *NiFi Flow* link on the status bar.
++
+image::images/breadcrumbs.png[width=400]
+
++
 At this point, the messages are already in the Kafka topic. You can add more processors as needed to process, split, duplicate or re-route your FlowFiles to all other destinations and processors.
 
-. To complete this Lab, let's commit and version the work we've just done. Go back to the NiFi root canvas, clicking on the "Nifi Flow" breadcrumb. Right-click on the *Process Sensor Data* Process Group and select *Version > Commit local changes*. Enter a descriptive comment and save.
+. To complete this Lab, let's commit and version the work we've just done. Right-click on the *Push to Kafka* Process Group in the main canvas and select *Version > Commit local changes*. Enter a descriptive comment and save.
 
 [[lab_5, Lab 5]]
 == Lab 5 - Use SMM to confirm that the data is flowing correctly

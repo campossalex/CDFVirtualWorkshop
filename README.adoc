@@ -42,48 +42,12 @@ Below a screenshot of Chrome open with 8 tabs, one for each service.
 
 image::images/browser.png[width=800]
 
-=== (Optional) SSH access
-
-This access is not required for the workshop labs. You can skip this section.
-
-SSH access is only required if you need to troubleshoot issues or want to poke around your clusters. The procedure to connect via SSH depends on the type of computer you're using:
-
-==== SSH into the cluster from Linux/Macos
-
-From the registration link, download the PEM key required to access to your cluster with SSH. Run the following command:
-
-----
-chmod 400 workshop.pem
-ssh -i workshop.pem centos@you-ip-address
-----
-
-==== SSH into the cluster from Windows
-
-From the registration link, download the PEM key required to access to your cluster with SSH. We will use link:https://www.putty.org/[PuTTY] to connect to the cluster. However, Putty doesn't accept PEM key. Follow these instructions to convert your PEM key into a PPK key and connect to the cluster
-
-Convert your key with *PuTTYgen*:
-
-. Use PuTTYgen to convert .PEM file to .PPK file.
-. Start PuTTYgen and select “Load”
-. Select your .PEM file.
-. Putty will convert the .PEM format to .PPK format.
-. Select “Save Private Key” A passphrase is not required but can be used if additional security is required.
-
-Connect with *PuTTY*:
-
-. Launch PuTTY and enter the host IP address.
-. Navigate to Connection/SSH/Auth
-. Click “Browse” and select the .PPK file you exported from PuTTYgen.
-. Click “Open.”
-
 == Labs
 
 Time to start working and see some interesting stuff!
 Pick your lab and let's get started!
 
-* link:streaming.adoc[From Edge to Streams Processing]
-* link:spark_analytics.adoc[Spark and Fast Analytics with Kudu]
-* link:datascience.adoc[CDSW Experiments and Models]
+* link:streaming.adoc[CDF Hands On Workshop]
 
 == Resources
   
@@ -94,51 +58,4 @@ Pick your lab and let's get started!
 ** https://github.com/fabiog1901/OneNodeCDHCluster
 
 * link:https://www.cloudera.com/documentation.html[Cloudera Documentation]
-
-[[troubleshooting, Troubleshooting]]
-== Troubleshooting
-
-==== General
-
-* *Everything is Case-Sensitive*.
-* Check all your connections and spellings
-
-==== MiNiFi Not Sending Messages
-
-* Make sure you pick HTTP, not RAW, in Cloud Connection to NiFi
-* Make sure there are *no spaces before or after* Destination ID, URL, Names, Topics, Brokers, etc...
-* Make sure there are *no spaces anywhere*!
-* Everything is *Case-Sensitive*. For example, the bucket name in NiFi Registry is `IoT`, not `iot`.
-* Check /opt/cloudera/cem/minifi/logs/minifi-app.log if you can't find an issue
-* You must have HDFS User Created via HUE, Go there First
-
-
-==== CEM doesn't pick up new NARs
-
-. Delete the agent manifest manually using the EFM API:
-
-. Verify each class has the same agent manifest ID:
-+
-[source]
-----
-http://hostname:10080/efm/api/agent-classes
-[{"name":"iot1","agentManifests":["agent-manifest-id"]},{"name":"iot4","agentManifests":["agent-manifest-id"]}]
-----
-
-. Confirm the manifest doesn't have the NAR you installed
-+
-[source]
-----
-http://hostname:10080/efm/api/agent-manifests?class=iot4
-[{"identifier":"agent-manifest-id","agentType":"minifi-java","version":"1","buildInfo":{"timestamp":1556628651811,"compiler":"JDK 8"},"bundles":[{"group":"default","artifact":"system","version":"unversioned","componentManifest":{"controllerServices":[],"processors":
-----
-
-. Call the API endpoint:
-+
-[source]
-----
-http://hostname:10080/efm/swagger/
-----
-
-. Hit the `DELETE - Delete the agent manifest specified by id` button, and in the id field, enter `agent-manifest-id
 

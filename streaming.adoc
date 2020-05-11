@@ -1,4 +1,4 @@
-= From Edge to Streams Processing
+= CDF Hands On Workshop
 
 In this workshop you'll implement a data pipeline, using MiNiFi and NiFi to ingest data from an IoT device into Kafka and then consume data from Kafka and write it to Kudu tables.
 
@@ -14,39 +14,17 @@ In this workshop you'll implement a data pipeline, using MiNiFi and NiFi to inge
 * *Lab 8* - Check the data on Kudu.
 
 [[lab_1, Lab 1]]
-== Lab 1 - Apache NiFi: setup machine sensors simulator 
+== Lab 1 - Apache NiFi: run machine sensors simulator
 
 In this lab you will run a simple Python script that simulates IoT sensor data from some hypothetical machines, and send the data to a MQTT broker (link:https://mosquitto.org/[mosquitto]). The gateway host is connected to many and different type of sensors, but they generally all share the same transport protocol, "mqtt".
 
-. Go to Apache NiFi and add a Processor (ExecuteProcess) to the canvas.
-+
-image::images/simulate1.png[width=800]
-
-. Right-click the processor, select *Configure* (or, alternatively, just double-click the processor). On the *PROPERTIES* tab, set the properties shown below to run our Python simulate script.
-+
-[source]
-----
-Command:           python
-Command Arguments: /opt/demo/simulate.py
-----
-+
-image::images/simulate2.png[width=500]
-
-. In the *SCHEDULING* tab, set to *Run Schedule: 1 sec*
-+
-Alternatively, you could set that to other time intervals: 1 sec, 30 sec, 1 min, etc...
-+
-image::images/runSimulator1or30.png[width=500]
-
-. In the *SETTINGS* tab, check the "*success*" relationship in the *AUTOMATICALLY TERMINATED RELATIONSHIPS* section. Click *Apply*.
-+
-image::images/nifiTerminateRelationships.png[width=600]
+. Go to Apache NiFi and find in the canvas a Processor called "Generate Test Data". Take a look at the properties already set.
 
 . You can then right-click to *Start* this simulator runner.
 +
 image::images/nifiDemoStart.png[width=400]
 
-. Right-click and select *Stop* after a few seconds and look at the *provenance*. You'll see that it has run a number of times and produced results.
+. Right-click and select *Stop* after a few seconds and look at the *provenance*, by clicking at "View data provenance" option. You'll see that it has run a number of times and produced results.
 +
 image::images/NiFiViewDataProvenance.png[width=400]
 +

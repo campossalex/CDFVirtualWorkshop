@@ -10,7 +10,6 @@ image::images/iot-architecture.png[width=800]
 
 * Everything is Case-Sensitive. 
 * Check all your connections and spellings
-* If you hit any problems like, for example, *MiNiFi Not Sending Messages*, check for clues in the <<troubleshooting>> section below.
 
 === Pre-requisites
 

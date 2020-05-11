@@ -97,11 +97,12 @@ image::images/add_rpg.png[width=800]
 +
 image::images/add_input_port.png[width=800]
 
-. Connect the Input Port to the *Push to Kakfa* Process Group by dragging the destination of the current connection from the *Iput Port* to the Process Group. When prompted, ensure the "To input" fields is set to the *Sensor data* Input Port, that is located inside the process group.
+. Connect the Input Port to the *Push to Kakfa* Process Group by dragging the destination of the current connection from the *Iput Port* to the Process Group.
 
 +
 image::images/from_gw_to_push_to_kafka.png[width=600]
-
++
+When prompted, ensure the "To input" fields is set to the *Sensor data* Input Port, that is located inside the process group. Click  *Apply*  to finish the connection.
 +
 image::images/to_input.png[width=600]
 
@@ -122,10 +123,9 @@ Double-click the connection to check the configuration:
 +
 image::images/efmSetCloudConfiguration.png[width=400]
 
-. The Flow is now complete, but before publishing it, a Bucket is already setup in  _NiFi Registry_, so that all versions of your flows are stored for review and audit. Open the NiFi Registry at `\http://<public_dns>:18080/nifi-registry`, click on the wrench/spanner icon (image:images/spanner_icon.png[width=20]) on the top-right corner on and make sure a bucket called `IoT` is created.
+. The Flow is now complete, but before publishing it, a Bucket is already setup in  _NiFi Registry_, so that all versions of your flows are stored for review and audit. Open the NiFi Registry at `\http://<public_dns>:18080/nifi-registry`, click on the wrench/spanner icon (image:images/spanner_icon.png[width=20]) on the top-right corner on and make sure a bucket called `IoT` is already created.
 +
-image::images/create_bucket.png[width=800]
-
+image::images/nifi_registry_bucket_list.png[width=800]
 . You can now publish the flow for the MiNiFi agent to automatically pick up. Click *Publish*, add a descriptive comment for your changes and click *Apply*.
 +
 image::images/publish_flow.png[width=800]
@@ -139,7 +139,7 @@ image::images/flow_in_nifi_registry.png[width=800]
 
 . At this point, you can test the edge flow up until NiFi. Start the NiFi simulator (ExecuteProcess processor) again and confirm you can see the messages queued in NiFi.
 +
-image::images/queued_events.png[width=300]
+image::images/queued_events.png[width=400]
 
 . You can stop the simulator (Stop the NiFi processor) once you confirm that the flow is working correctly.
 

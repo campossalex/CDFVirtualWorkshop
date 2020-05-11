@@ -10,6 +10,45 @@ endif::[]
 
 In this workshop you'll implement a data pipeline, using MiNiFi and NiFi to ingest data from an IoT device into Kafka and then consume data from Kafka and write it to Kudu tables.
 
+== Configurations
+
+Before we start, let's take a look at some pre-configuration already setup for the propose of this workshop:
+
+*DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
+
+. *NiFi Registry*: a couple of  Bucket is already setup in  _NiFi Registry_, so that all versions of your flows are stored for review and audit. Open the NiFi Registry at `\http://<public_dns>:18080/nifi-registry`, click on the wrench/spanner icon (image:images/spanner_icon.png[width=20]) on the top-right corner on and make sure a bucket called `IoT` (for MiNiFi flows) and `SensorFlows` (for NiFi flows) are already created.
++
+image::images/nifi_registry_bucket_list.png[width=800]
+
+. *NiFi Flows Version Control*: We want to be able to version control the flows we will add to NiFi. In order to do that, we first need to check if NiFi is connected to the *NiFi Registry*. On the NiFi global menu, click on "Controller Settings", to open configuration window.
++
+image::images/global_controller_settings.png[width=800]
++
+Navigate to the "Registry Clients" tab and make sure a Registry client is configured with the following URL:
++
+----
+Name: NiFi Registry
+URL:  http://edge2ai-1.dim.local:18080
+----
++
+image::images/nifi_registry_client.png[width=800]
++
+. *NiFi Controllers*: Controller Services are shared services that can be used by reporting tasks, processors, and other services to utilize for configuration or task execution. Several controllers are already configured for lab execution. Right-click on the main canvas and select _Configure_ option.
++
+image::images/canvas_controller_services.png[width=800]
++
+A new window will open, listing configured controllers. Go to _Controller Services_ tab.
++
+image::images/canvas_controller_services_list.png[width=800]
++
+You can review any of those Controllers configurations, but here is how we are going to use them during the labs:
+
+.. *HortonworkSchemaRegistry*: allows interaction with a schema repository, and reuse those schemas in NiFi flows.
+.. *JsonRecordSetWriter*: allows NiFi to write records from the flows in JSON format.
+.. *JsonTreeReader*: allows NiFi to understand the format of the input event data (based on a schema), in this case JSON format, and parse them into individual records. Use a `${schema.name}` attribute to identify schema's name.
+.. *JsonTreeReader - With schema identifier*: similar to the previous one, but instead of use `${schema.name}` attribute, will use the schema properties in the header.
+.. *RestLookupService*: controller service to perform the calls to the CDSW model API endpoint, where a Machine Learning model is exposed to perform real time scoring.
+
 == Labs summary
 
 * <<lab_1>> - On the Apache NiFi, run a simulator to send IoT sensors data to the MQTT broker.
@@ -122,18 +161,15 @@ image::images/connect_to_rpg.png[width=800]
 Double-click the connection to check the configuration:
 +
 image::images/efmSetCloudConfiguration.png[width=400]
-
-. The Flow is now complete, but before publishing it, a Bucket is already setup in  _NiFi Registry_, so that all versions of your flows are stored for review and audit. Open the NiFi Registry at `\http://<public_dns>:18080/nifi-registry`, click on the wrench/spanner icon (image:images/spanner_icon.png[width=20]) on the top-right corner on and make sure a bucket called `IoT` is already created.
 +
-image::images/nifi_registry_bucket_list.png[width=800]
-. You can now publish the flow for the MiNiFi agent to automatically pick up. Click *Publish*, add a descriptive comment for your changes and click *Apply*.
+. You can now publish the flow for the MiNiFi agent to automatically pick up. We are using the `IoT` bucket already created in NiFi Registry. Click *Publish*, add a descriptive comment for your changes and click *Apply*.
 +
 image::images/publish_flow.png[width=800]
 +
 image::images/cem_first_version.png[width=800]
 
 
-. Go back to the *NiFi Registry* Web UI and click on the *NiFi Registry* name, next to the Cloudera logo. If the flow publishing was successful, you should see the flow's version details in the NiFi Registry.
+. Go to the *NiFi Registry* Web UI and refresh the page. If the flow publishing was successful, you should see the flow's version details in the NiFi Registry.
 +
 image::images/flow_in_nifi_registry.png[width=800]
 
@@ -175,27 +211,6 @@ image::images/push_to_kafka_pg.png[width=800]
 . You will see that the Process Group is already pre-configured with one _Input Port_ and two _Processors_. Do not care about the warning signs, we still need to make some configurations. Take a look in the bottom of the canvas. A link allows you to go back to the main canvas.
 +
 image::images/push_to_kafka_pg_detail.png[width=800]
-+
-. We want to be able to version control the flows we will add to the Process Group. In order to do that, we first need to check if NiFi is connected to the *NiFi Registry*. On the NiFi global menu, click on "Controller Settings", to open configuration window.
-+
-image::images/global_controller_settings.png[width=800]
-+
-Navigate to the "Registry Clients" tab and make sure a Registry client is configured with the following URL:
-+
-----
-Name: NiFi Registry
-URL:  http://edge2ai-1.dim.local:18080
-----
-+
-image::images/nifi_registry_client.png[width=800]
-+
-*DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
-
-. A bucket is already created for storing the Sensor flow. On the *NiFi Registry* Web UI, make sure a bucket called `SensorFlows` is listed:
-+
-image::images/nifi_registry_bucket_list_2.png[width=800]
-+
-*DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
 +
 . Back on the *NiFi* Web UI, to enable version control for the Process Group, right-click on the canvas and select *Version > Start version control* and enter the details below.
 +

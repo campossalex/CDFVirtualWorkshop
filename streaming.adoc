@@ -1,3 +1,11 @@
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
 = CDF Hands On Workshop
 
 In this workshop you'll implement a data pipeline, using MiNiFi and NiFi to ingest data from an IoT device into Kafka and then consume data from Kafka and write it to Kudu tables.
@@ -73,8 +81,8 @@ Scroll down on the properties page to review the *Topic Filter* and *Max Queue S
 +
 image::images/add_consumer_mqtt_2.png[width=800]
 +
-:tip-caption:  *DO NOT DO ANY CHANGES ON THOSE CONFIGURATIONS*
-
+*DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
++
 . Add a _Remote Process Group_ (RPG) to the canvas and configure it as follows:
 +
 [source]
@@ -89,13 +97,13 @@ image::images/add_rpg.png[width=800]
 +
 image::images/add_input_port.png[width=800]
 
-. To terminate the NiFI _Input Port_ let's, for now, add a _Funnel_ to the canvas...
-+
-image::images/add_funnel.png[width=600]
+. Connect the Input Port to the *Push to Kakfa* Process Group by dragging the destination of the current connection from the *Iput Port* to the Process Group. When prompted, ensure the "To input" fields is set to the *Sensor data* Input Port, that is located inside the process group.
 
-. ... and setup a connection from the Input Port to it. To setup a connection, hover the mouse over the Input Port until an arrow symbol is shown in the center. Click on the arrow, drag it and drop it on the Funnel to connect the two elements.
 +
-image::images/connecting.png[width=800]
+image::images/from_gw_to_push_to_kafka.png[width=600]
+
++
+image::images/to_input.png[width=800]
 
 . Right-click on the Input Port and start it. Alternatively, click on the Input Port to select it and then press the start ("play") button on the Operate panel:
 +
@@ -104,11 +112,12 @@ image::images/operate_panel.png[width=300]
 . You will need the ID of the _Input Port_ to complete the connection of the _ConsumeMQTT_ processor to the RPG (NiFi). Double-click on the _Input Port_ and copy its ID.
 +
 image::images/input_port_id.png[width=800]
-
++
 . Back to the Flow Designer, connect the ConsumeMQTT processor to the RPG. The connection requires an ID and you can paste here the ID you copied from the Input Port. *Make sure that there are NO SPACES*!
 +
 image::images/connect_to_rpg.png[width=800]
 +
+
 Double-click the connection to check the configuration:
 +
 image::images/efmSetCloudConfiguration.png[width=400]

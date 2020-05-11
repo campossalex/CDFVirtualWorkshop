@@ -103,7 +103,7 @@ image::images/add_input_port.png[width=800]
 image::images/from_gw_to_push_to_kafka.png[width=600]
 
 +
-image::images/to_input.png[width=800]
+image::images/to_input.png[width=600]
 
 . Right-click on the Input Port and start it. Alternatively, click on the Input Port to select it and then press the start ("play") button on the Operate panel:
 +

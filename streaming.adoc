@@ -30,7 +30,7 @@ image::images/NiFiViewDataProvenance.png[width=400]
 +
 image::images/NiFiDataProvenance.png[width=800]
 
-[[lab_2, Lab2]]
+[[lab_2, Lab 2]]
 == Lab 2 - Configuring Edge Flow Management
 
 Cloudera Edge Flow Management gives you a visual overview of all MiNiFi agents in your environment, and allows you to update the flow configuration for each one, with versioning control thanks to the **NiFi Registry** integration. In this lab, you will create the MiNiFi flow and publish it for the MiNiFi agent to pick it up.

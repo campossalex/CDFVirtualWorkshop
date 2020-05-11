@@ -18,7 +18,15 @@ In this workshop you'll implement a data pipeline, using MiNiFi and NiFi to inge
 
 In this lab you will run a simple Python script that simulates IoT sensor data from some hypothetical machines, and send the data to a MQTT broker (link:https://mosquitto.org/[mosquitto]). The gateway host is connected to many and different type of sensors, but they generally all share the same transport protocol, "mqtt".
 
-. Go to Apache NiFi and find in the canvas a Processor called "Generate Test Data". Take a look at the properties already set.
+. Go to Apache NiFi and find in the canvas a Processor called "Generate Test Data". Take a look at the properties already set on the *PROPERTIES* tab:
++
+[source]
+----
+Command:           python3
+Command Arguments: /opt/demo/simulate.py
+----
++
+image::images/simulate2.png[width=500]
 
 . You can then right-click to *Start* this simulator runner.
 +
@@ -28,7 +36,15 @@ image::images/nifiDemoStart.png[width=400]
 +
 image::images/NiFiViewDataProvenance.png[width=400]
 +
+List of Provenance Events related to "Generate Test Data" processor.
++
 image::images/NiFiDataProvenance.png[width=800]
++
+Click in the _i_ icon in the first column to review a *Provenance Event*. Once in the window, go to *CONTENT* tab and click on *VIEW* button to review event data.
++
+image::images/dataprovenancedetail.png[width=800]
++
+Go back to the main NiFi canvas by closing event data, NiFi Data Provenance and Provenance event windows.
 
 [[lab_2, Lab 2]]
 == Lab 2 - Configuring Edge Flow Management
@@ -56,6 +72,8 @@ image::images/add_consumer_mqtt.png[width=800]
 Scroll down on the properties page to review the *Topic Filter* and *Max Queue Size* configurations:
 +
 image::images/add_consumer_mqtt_2.png[width=800]
++
+icon:fire[] *DO NOT DO ANY CHANGES ON THOSE CONFIGURATIONS*
 
 . Add a _Remote Process Group_ (RPG) to the canvas and configure it as follows:
 +

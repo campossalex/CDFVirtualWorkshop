@@ -79,7 +79,7 @@ image::images/simulate2.png[width=500]
 +
 image::images/nifiDemoStart.png[width=400]
 
-. Right-click and select *Stop* after a few seconds and look at the *provenance*, by clicking at "View data provenance" option. You'll see that it has run a number of times and produced results.
+. After a few seconds look at the *provenance*, by clicking at "View data provenance" option. You'll see that it has run a number of times and produced results.
 +
 image::images/NiFiViewDataProvenance.png[width=400]
 +

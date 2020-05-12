@@ -1,8 +1,0 @@
-*.pem
-*.pem.*
-tmp/
-*.swp
-.DS_Store
-terraform/logs
-parcels/*.parcel*
-csds/*.jar

@@ -120,7 +120,7 @@ Scroll down on the properties page to review the *Topic Filter* and *Max Queue S
 +
 image::images/add_consumer_mqtt_2.png[width=800]
 +
-*DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
+NOTE: *DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
 +
 . Add a _Remote Process Group_ (RPG) to the canvas and configure it as follows:
 +

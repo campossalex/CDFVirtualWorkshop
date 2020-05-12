@@ -12,7 +12,7 @@ In this workshop you'll implement a data pipeline, using MiNiFi and NiFi to inge
 
 == Configurations
 
-Before we start, let's take a look at some pre-configuration already setup for the propose of this workshop:
+Before we start, let's take a look at some pre-configuration already setup for the purpose of this workshop:
 
 *DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
 

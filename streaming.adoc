@@ -14,7 +14,7 @@ In this workshop you'll implement a data pipeline, using MiNiFi and NiFi to inge
 
 Before we start, let's take a look at some pre-configuration already setup for the purpose of this workshop:
 
-*DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
+NOTE: *DO NOT MAKE ANY CHANGES ON THOSE CONFIGURATIONS*
 
 . *NiFi Registry*: a couple of  Bucket is already setup in  _NiFi Registry_, so that all versions of your flows are stored for review and audit. Open the NiFi Registry at `\http://<public_dns>:18080/nifi-registry`, click on the wrench/spanner icon (image:images/spanner_icon.png[width=20]) on the top-right corner on and make sure a bucket called `IoT` (for MiNiFi flows) and `SensorFlows` (for NiFi flows) are already created.
 +

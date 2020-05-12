@@ -18,9 +18,9 @@ image::images/iot-architecture.png[width=800]
 
 === Connecting to your cluster
 
-You instructor will give access to a registration link where you can request a cluster. You should have 2 addresses for you one-node cluster: the public DNS name and the public IP address. With those addresses you can test the following connectivity to your cluster:
+. Register your access to a cluster. Instructor will give access to a registration link where you can request a cluster.
 
-. Ensure you can connect to the following service using your browser:
+. You should have 2 addresses for you one-node cluster: the public DNS name and the public IP address. With those addresses you can test the following connectivity to your cluster. Ensure you can connect to the following service using your browser. :
 +
 [%autowidth,options="header"]
 |===
@@ -34,8 +34,15 @@ You instructor will give access to a registration link where you can request a c
 |Hue|http://<public_dns>:8888/|`admin/admin`
 |CDSW|http://cdsw.<public_IP>.nip.io/|`admin/supersecret1`
 |===
-. Login into *Cloudera Manager* and familiarize yourself with the services installed
-. Login into *Hue*. As you are the first user to login into Hue, you are granted admin privileges. At this point, you won't need to do anything on Hue, but by logging in, CDH has created your HDFS user and folder, which you will need for the next lab.
+. We suggest you to open each of those services in one tab:
+
+.. Edge Flow Manager
+.. NiFi
+.. NiFi Registry
+.. Schema Registry
+.. SMM
+.. Hue
+.. CML
 
 Below a screenshot of Chrome open with 8 tabs, one for each service.
 
@@ -43,7 +50,7 @@ image::images/browser.png[width=800]
 
 == Labs
 
-Time to start working and see some interesting stuff!
+Once you have all services opened in your browser, it is time to start working and see some interesting stuff!
 Pick your lab and let's get started!
 
 * link:streaming.adoc[CDF Hands On Workshop]

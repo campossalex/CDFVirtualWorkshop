@@ -259,7 +259,7 @@ Property Value: SensorReading
 ----
 .. Click *Apply*
 
-. Connect the *Set Schema Name* processor to the *Publish to Kafka topic: iot* processor. Start *Set Schema Name* processor.
+. Connect the *Set Schema Name* processor to the *Publish to Kafka topic: iot* processor. When the "Create connection" dialog appears, select "*success*" and click *Add*. Start *Set Schema Name* processor.
 
 . Double-click the  _Publish to Kafka topic: iot_ processor and configure it as follows:
 

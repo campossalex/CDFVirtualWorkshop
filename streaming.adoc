@@ -41,6 +41,8 @@ A new window will open, listing configured controllers. Go to _Controller Servic
 +
 image::images/canvas_controller_services_list.png[width=800]
 +
+Make sure all controllers are enabled. You can enable by clicking on the service's _flash_ icon (image:images/flash_icon.png[width=20]), and *State* will change from _Disabled_ to _Enabled_.
++
 You can review any of those Controllers configurations by clicking on the service's _cog_ icon (image:images/cog_icon.png[width=20]) and go to the *Properties* tab. Here is how we are going to use them during the labs:
 
 .. *HortonworkSchemaRegistry*: allows interaction with a schema repository, and reuse those schemas in NiFi flows.

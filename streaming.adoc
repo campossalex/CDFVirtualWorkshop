@@ -520,11 +520,16 @@ image::images/put_to_kudu_pg_overview_2.png[width=800]
 
 When we added the *Predict machine health* above, you may have noticed that one of the properties (`request.body`) makes a reference to a variable called `cdsw.access.key`. This is an application key required to authenticate with the CDSW Model API when requesting predictions. So, we need to provide the key to the _LookupRecord_ processor by setting a variable with its value.
 
+. Go to CDSW WEb UI and click in the _IoT Prediction Model_ project.
+
 . To get the Access Key, go to the CDSW Web UI and click on *Models > Iot Prediction Model > Settings*. Copy the Access Key.
 +
 image::images/model_access_key.png[width=800]
 
-. Go back to the NiFi Web UI, right-click on an empty area of the *Process Sensor Data* canvas, and click on *Variables*.
+. Go back to the NiFi Web UI, right-click on an empty area of the *Put to Kudu* canvas, and click on *Variables*.
++
+image::images/add_variable_dropmenu.png[width=800]
+
 
 . Click on the _plus_ button (image:images/plus_button.png[width=25]) and add the following variable:
 +
@@ -539,8 +544,6 @@ image::images/access_key_variable.png[width=800]
 . Click *Apply*
 
 ==== Create the Kudu table
-
-NOTE: If you already created this table in a previous workshop, please skip the table creation here.
 
 . Go to the Hue Web UI and login. The first user to login to a Hue installation is automatically created and granted admin privileges in Hue.
 

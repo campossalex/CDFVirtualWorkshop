@@ -228,6 +228,8 @@ image::images/pg_versioning_confirmation.png[width=800]
 === Creating the flow
 
 . Double-click on the _Push to Kafka_ process group to expand it.
++
+image::images/push_to_kafka_pg.png[width=800]
 
 . You will see that the Process Group is already pre-configured with one _Input Port_ and two _Processors_. Do not care about the warning signs, we still need to make some configurations. Take a look in the bottom of the canvas. A link allows you to go back to the main canvas.
 +
@@ -351,7 +353,7 @@ image::images/reconnect_consume_mqtt.png[width=800]
 +
 NOTE: In case you cannot reconnect, delete the current connection (right-click and Delete) and then make a new connection.
 +
-. Connect the _Extract sensor_0 and sensor1 values_ to the _Filter errors_ processor. When the *Create Connection* dialog appear, select "*matched*" and click *Create*.
+. Connect the _Extract sensor_0 and sensor1 values_ to the _Filter errors_ processor  (bottom  right processor in the canvas). When the *Create Connection* dialog appear, select "*matched*" and click *Create*.
 +
 image::images/connect_extract_to_route.png[width-800]
 
@@ -398,24 +400,25 @@ In this lab, you will use NiFi to consume the Kafka messages containing the IoT 
 
 In preparation for the workshop we trained and deployed a Machine Learning model on the Cloudera Data Science Workbench (CDSW) running on your cluster. The model API can take a feature vector with the reading for the 12 temperature readings provided by the sensor and predict, based on that vector, if the machine is likely to break or not.
 
-=== Create the flow
+=== Configure the flow
 
-We'll now create the flow to read the sensor data from Kafka, execute a model prediction for each of them and write the results to Kudu. At the end of this section you flow should look like the one below:
+. Double-click on the _Push to Kudu_ process group to expand it.
++
+image::images/put_to_kudu_pg.png[width=800]
+
+. You will see that the Process Group is already pre-configured with four Processors and one Funnel. Do not care about the warning signs, we still need to make some configurations.
++
+image::images/put_to_kudu_pg_overview.png[width=800]
++
+. Now we'll finish flow configuration to read the sensor data from Kafka, execute a model prediction for each of them and write the results to Kudu. At the end of this section you flow should look like the one below:
 
 image::images/from_kafka_to_kudu_flow.png[width=800]
 
-==== ConsumeKafkaRecord_2_0 processor
+==== Consume Kafka iot messages processor
 
-. We'll add a new flow to the same canvas we were using before (inside the *Process Sensor Data* Process Group). Click on an empty area of the canvas and drag it to the side to give you more space to add new processors.
+This processor will consume the event already pushed to Kaffa from the previous labs.
 
-. Add a *ConsumeKafkaRecord_2_0* processor to the canvas and configure it as shown below:
-+
-*SETTINGS* tab:
-+
-[source]
-----
-Name: Consume Kafka iot messages
-----
+. Double-click _Consume Kafka iot messages_ processor (first from top to bottom) and add missing configurations as shown below:
 +
 *PROPERTIES* tab:
 +
@@ -431,21 +434,17 @@ Group ID:                             iot-sensor-consumer
 Offset Reset:                         latest
 Headers to Add as Attributes (Regex): schema.*
 ----
+`iot-sensor-consumer` will help us to further identify consumers groups in SMM.
 
-. Add a new _Funnel_ to the canvas and connect the *Consume Kafka iot messages* to it. When prompted, check the *parse.failure* relationship for this connection:
+. Connect the *Consume Kafka iot messages* to the *Funnel*. When prompted, check the *parse.failure* relationship for this connection:
 +
 image:images/parse_failure_relationship.png[width=500]
 
-==== LookupRecord processor
+==== Predict machine health processor
 
-. Add a *LookupRecord* processor to the canvas and configure it as shown below:
-+
-*SETTINGS* tab:
-+
-[source]
-----
-Name: Predict machine health
-----
+This processor will score each event using a Machine Learning model exposed as REST API in CDSW. Model will return a response, predicting if the machine is likely to break or not, based on temperature reading provided by the sensor.
+
+. Double-click _Predict machine health_ processor (second from top to bottom) and make sure configurations are set as shown below:
 +
 *PROPERTIES* tab:
 +
@@ -457,33 +456,22 @@ Lookup Service:         RestLookupService
 Result RecordPath:      /response
 Routing Strategy:       Route to 'success'
 Record Result Contents: Insert Entire Record
+mime.type:              toString('application/json', 'UTF-8')
+request.body:           concat('{"accessKey":"', '${cdsw.access.key}', '","request":{"feature":"', /sensor_0, ', ', /sensor_1, ', ', /sensor_2, ', ', /sensor_3, ', ', /sensor_4, ', ', /sensor_5, ', ', /sensor_6, ', ', /sensor_7, ', ', /sensor_8, ', ', /sensor_9, ', ', /sensor_10, ', ', /sensor_11, '"}}')
+request.method:         toString('post', 'UTF-8')
 ----
 
-. Add 3 more user-defined properties by clicking on the _plus_ button (image:images/plus_button.png[width=25]) for each of them:
-+
-[source]
-----
-mime.type:      toString('application/json', 'UTF-8')
-request.body:   concat('{"accessKey":"', '${cdsw.access.key}', '","request":{"feature":"', /sensor_0, ', ', /sensor_1, ', ', /sensor_2, ', ', /sensor_3, ', ', /sensor_4, ', ', /sensor_5, ', ', /sensor_6, ', ', /sensor_7, ', ', /sensor_8, ', ', /sensor_9, ', ', /sensor_10, ', ', /sensor_11, '"}}')
-request.method: toString('post', 'UTF-8')
-----
-
-. Click *Apply* to save the changes to the *Predict machine health* processor.
+. Click *Close* to go back to the process group.
 
 . Connect the *Consume Kafka iot messages* processor to the *Predict machine health* one. When prompted, check the *success* relationship for this connection.
 
-. Connect the *Predict machine health* to the same _Funnel_ you had created above. When prompted, check the *failure* relationship for this connection.
+. Connect the *Predict machine health* to the same _Funnel_. When prompted, check the *failure* relationship for this connection.
 
-==== UpdateRecord processor
+==== Update health flag processor
 
-. Add a *UpdateRecord* processor to the canvas and configure it as shown below:
-+
-*SETTINGS* tab:
-+
-[source]
-----
-Name: Update health flag
-----
+This processor will update flow _is_healthy_ attribute based on the scoring model response,
+
+. Double-click _Update health flag_ processor (third from top to bottom) and add missing configurations as shown below:
 +
 *PROPERTIES* tab:
 +
@@ -492,29 +480,20 @@ Name: Update health flag
 Record Reader:              JsonTreeReader - With schema identifier
 Record Writer:              JsonRecordSetWriter
 Replacement Value Strategy: Record Path Value
-----
-
-. Add one more user-defined propertie by clicking on the _plus_ button (image:images/plus_button.png[width=25]):
-+
-[source]
-----
-/is_healthy: /response/result
+/is_healthy:                /response/result
 ----
 
 . Connect the *Predict machine health* processor to the *Update health flag* one. When prompted, check the *success* relationship for this connection.
 
-. Connect the *Update health flag* to the same _Funnel_ you had created above. When prompted, check the *failure* relationship for this connection.
+. Connect the *Update health flag* to the same _Funnel_. When prompted, check the *failure* relationship for this connection.
 
-==== PutKudu processor
+==== Write to Kudu processor
+
+This processor will save event data with _health_ score to a Kudu table.
+
+. Double-click _Write to Kudu_ processor (fourth from top to bottom) and add missing configurations as shown below:
 
 . Add a *PutKudu* processor to the canvas and configure it as shown below:
-+
-*SETTINGS* tab:
-+
-[source]
-----
-Name: Write to Kudu
-----
 +
 *PROPERTIES* tab:
 +
@@ -527,9 +506,15 @@ Record Reader:    JsonTreeReader - With schema identifier
 
 . Connect the *Update health flag* processor to the *Write to Kudu* one. When prompted, check the *success* relationship for this connection.
 
-. Connect the *Write to Kudu* to the same _Funnel_ you had created above. When prompted, check the *failure* relationship for this connection.
+. Connect the *Write to Kudu* to the same _Funnel_. When prompted, check the *failure* relationship for this connection.
 
 . Double-click on the *Write to Kudu* processor, go to the *SETTINGS* tab, check the "*success*" relationship in the *AUTOMATICALLY TERMINATED RELATIONSHIPS* section. Click *Apply*.
+
+. Your _Put to Kafka_ canvas now should have all four processors stopped.
++
+image::images/put_to_kudu_pg_overview_2.png[width=800]
++
+*DO NOT START ANY PROCESSOR YET. CONTINUE THE INSTRUCTIONS*
 
 ==== CDSW Access Key
 

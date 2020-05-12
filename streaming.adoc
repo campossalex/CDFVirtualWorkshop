@@ -58,7 +58,7 @@ You can review any of those Controllers configurations by clicking on the servic
 * <<lab_5>> - On the *Streams Messaging Manager (SMM)* Web UI, monitor the Kafka cluster and confirm data is being ingested correctly.
 * <<lab_6>> - Use the Edge Flow Manager to update existing edge flows and perform additional processing on the edge
 * <<lab_7>> - Use NiFi to process each record, calling the **Model endpoint** and save results to **Kudu**.
-* *Lab 8* - Check the data on Kudu.
+* <<lab_8>> - Check the data on Kudu.
 
 [[lab_1, Lab 1]]
 == Lab 1 - Apache NiFi: run machine sensors simulator
@@ -615,4 +615,10 @@ LIMIT 100;
 . Run the queries a few times \and verify that the number of sensor readings are increasing as the data is ingested into the Kudu table. This allows you to build real-time reports for fast action.
 +
 image::images/table_select.png[width=800]
+
+== Congratulations
+
+You have finished all the labs!!!
+
+image::images/congrats.png[width=300]
 

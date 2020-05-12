@@ -93,6 +93,9 @@ image::images/dataprovenancedetail.png[width=800]
 +
 Go back to the main NiFi canvas by closing event data, NiFi Data Provenance and Provenance event windows.
 
++
+NOTE: KEEP THIS PROCESSOR RUNNING FOR THE REST OF THE WORKSHOP
+
 [[lab_2, Lab 2]]
 == Lab 2 - Configuring Edge Flow Management
 

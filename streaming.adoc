@@ -407,7 +407,7 @@ In preparation for the workshop we trained and deployed a Machine Learning model
 
 === Configure the flow
 
-. Double-click on the _Push to Kudu_ process group to expand it.
+. Double-click on the _Put to Kudu_ process group to expand it.
 +
 image::images/put_to_kudu_pg.png[width=800]
 

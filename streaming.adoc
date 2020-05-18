@@ -713,7 +713,7 @@ DESCRIBE sensors;
 +
 image::images/flink_show_tables.png[width=800]
 +
-. Run following Flink queries:
+. Run following Flink queries examples:
 +
 * Filter events scored as _unhealhy_ in the last 60 seconds:
 +
@@ -726,7 +726,7 @@ image::images/flink_resultset.png[width=800]
 +
 _Results are refreshed each 5 seconds_
 +
-Press *Q* letter to exit the resultset panel and terminate he query.
+Press *Q* letter to exit the resultset panel and stop running query.
 +
 * Filter devices with two or more events scored as _unhealhy_ in the last 60 seconds:
 +

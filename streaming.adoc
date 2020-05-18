@@ -498,8 +498,6 @@ Replacement Value Strategy: Record Path Value
 This processor will save event data with _health_ score to a Kudu table.
 
 . Double-click _Write to Kudu_ processor (fourth from top to bottom) and add missing configurations as shown below:
-
-. Add a *PutKudu* processor to the canvas and configure it as shown below:
 +
 *PROPERTIES* tab:
 +
@@ -627,17 +625,73 @@ image::images/table_select.png[width=800]
 
 In this lab, you will be challenged to run real time analytics over the telemetry data using Flink and data published to Kafka.
 
-=== Publish scored event to Kafka
+=== Publish scored event data to Kafka
 
-Before we start query data with Flink, let's push modify _Pu
+Before we start query data with Flink, let's modify _Put to Kudu_ processor group o publish scored data to a new Kafka topic called _iot_scored_.
+
+. In NiFi, go to _Put to Kudu_ processor group. We have added a new pre-configured processor _Publish to Kafka topic: iot_scored_.
++
+image::images/put_to_kudu_new_processor.png[width=800]
++
+. Connect the *Update health flag* processor to the *Publish to Kafka topic: iot_scored* one. When prompted, check the *success* relationship for this connection.
++
+image::images/connection_update_flag_to_publish_to_kafka.png[width=500]
++
+. Double-click _Publish to Kafka topic: iot_scored_ and add missing configurations as shown below:
++
+*PROPERTIES* tab:
++
+[source]
+----
+Kafka Brokers:                         edge2ai-1.dim.local:9092
+Topic Name:                            iot_scored
+Record Reader:                         JsonTreeReader
+Record Writer:                         JsonRecordSetWriter
+Use Transactions:                      false
+Attributes to Send as Headers (Regex): schema.*
+client.id                              nifi-sensor-data
+----
+We use the same `nifi-sensor-data` producer group.
++
+. Go to the *SETTINGS* tab, and make sure the "*success*" and "*failure*" relationship in the *AUTOMATICALLY TERMINATED RELATIONSHIPS* section are checked. Click *Apply*.
++
+. Start _Publish to Kafka topic: iot_scored_ processor. Now your _Put to Kafka_ processor group should look like this:
++
+image::images/put_to_kudu_updated.png[width=500]
++
+As you can see in the modified processor group, _Update health flag_ processor send data to _Publish to Kafka topic: iot_scored_ and _Write to Kudu_ processors.
 
 === Run SQL queries in Flink
 
-. Create stream data table in Flink:
+. Connect to the terminal (ssh). You can connect using one of those options indicated in your environment information:
++
+image::images/connect_to_terminal.png[width=800]
++
+For the purpose of this lab, we are using a web terminal, that you can access from your environment information.
+
+. Once connected, start Flink SQL client:
++
+[source,ssh]
+----
+flink-sql-client embedded
+----
++
+image::images/flink-sql-client_1.png[width=800]
++
+image::images/flink-sql-client_2.png[width=800]
++
+. Create a stream data table in Flink:
 +
 [source,sql]
 ----
 CREATE TABLE sensors (sensor_id INT, sensor_ts BIGINT, is_healthy  INT, response STRING , sensor_0 DOUBLE,sensor_1 DOUBLE,sensor_3 DOUBLE, sensor_4 DOUBLE, sensor_5 DOUBLE, sensor_6 DOUBLE, sensor_7 DOUBLE, sensor_8 DOUBLE, sensor_9 DOUBLE, sensor_10 DOUBLE, sensor_11 DOUBLE, proc_ime AS PROCTIME()) WITH ('connector.type' = 'kafka', 'connector.version' = 'universal', 'connector.topic' = 'iot_scored', 'connector.startup-mode' = 'latest-offset', 'connector.properties.bootstrap.servers' = 'edge2ai-1.dim.local:9092', 'format.type' = 'json');
+----
+
+. Run a query in Flink to filter events scored as _unhealhy_ in the last 60 seconds:
++
+[source,sql]
+----
+SELECT sensor_id, MIN(sensor_rt) AS first_event, MAX(sensor_rt) AS last_event, TIMESTAMPDIFF(SECOND, MIN(rowtime), MAX(rowtime)), COUNT(*) FROM sensors WHERE is_healthy = 0 GROUP BY HOP(sensor_rt, INTERVAL '5' SECOND, INTERVAL '60' SECOND);
 ----
 
 == Congratulations

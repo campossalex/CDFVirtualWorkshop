@@ -703,7 +703,7 @@ CREATE TABLE sensors (sensor_id INT, sensor_ts BIGINT, is_healthy  INT, response
 +
 [source,sql]
 ----
-SELECT sensor_id, COUNT(*) FROM sensors WHERE is_healthy = 0 GROUP BY HOP(sensor_rt, INTERVAL '5' SECOND, INTERVAL '60' SECOND);
+SELECT sensor_id, COUNT(*) AS num_events FROM sensors WHERE is_healthy = 0 GROUP BY HOP(proc_time, INTERVAL '5' SECOND, INTERVAL '60' SECOND);
 ----
 
 == Congratulations

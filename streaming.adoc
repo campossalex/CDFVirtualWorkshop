@@ -696,14 +696,14 @@ image::images/flink-sql-client_2.png[width=800]
 +
 [source,sql]
 ----
-CREATE TABLE sensors (sensor_id INT, sensor_ts BIGINT, is_healthy  INT, response STRING , sensor_0 DOUBLE,sensor_1 DOUBLE,sensor_3 DOUBLE, sensor_4 DOUBLE, sensor_5 DOUBLE, sensor_6 DOUBLE, sensor_7 DOUBLE, sensor_8 DOUBLE, sensor_9 DOUBLE, sensor_10 DOUBLE, sensor_11 DOUBLE, proc_ime AS PROCTIME()) WITH ('connector.type' = 'kafka', 'connector.version' = 'universal', 'connector.topic' = 'iot_scored', 'connector.startup-mode' = 'latest-offset', 'connector.properties.bootstrap.servers' = 'edge2ai-1.dim.local:9092', 'format.type' = 'json');
+CREATE TABLE sensors (sensor_id INT, sensor_ts BIGINT, is_healthy  INT, response STRING , sensor_0 DOUBLE,sensor_1 DOUBLE,sensor_3 DOUBLE, sensor_4 DOUBLE, sensor_5 DOUBLE, sensor_6 DOUBLE, sensor_7 DOUBLE, sensor_8 DOUBLE, sensor_9 DOUBLE, sensor_10 DOUBLE, sensor_11 DOUBLE, proc_time AS PROCTIME()) WITH ('connector.type' = 'kafka', 'connector.version' = 'universal', 'connector.topic' = 'iot_scored', 'connector.startup-mode' = 'latest-offset', 'connector.properties.bootstrap.servers' = 'edge2ai-1.dim.local:9092', 'format.type' = 'json');
 ----
 
 . Run a query in Flink to filter events scored as _unhealhy_ in the last 60 seconds:
 +
 [source,sql]
 ----
-SELECT sensor_id, MIN(sensor_rt) AS first_event, MAX(sensor_rt) AS last_event, TIMESTAMPDIFF(SECOND, MIN(rowtime), MAX(rowtime)), COUNT(*) FROM sensors WHERE is_healthy = 0 GROUP BY HOP(sensor_rt, INTERVAL '5' SECOND, INTERVAL '60' SECOND);
+SELECT sensor_id, COUNT(*) FROM sensors WHERE is_healthy = 0 GROUP BY HOP(sensor_rt, INTERVAL '5' SECOND, INTERVAL '60' SECOND);
 ----
 
 == Congratulations

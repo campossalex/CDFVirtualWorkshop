@@ -661,6 +661,18 @@ image::images/put_to_kudu_updated.png[width=800]
 +
 As you can see in the modified processor group, _Update health flag_ processor send data to _Publish to Kafka topic: iot_scored_ and _Write to Kudu_ processors.
 
+=== Review new topic in SMM
+
+. Make sure new _iot_scored_ topic is registered in SMM and data is flowing to it:
++
+image::images/smm_bonus_track_1.png[width=800]
++
+
+. Click the _nifi_sensor_data_ *Producer* located in the left panel to see how data is produced and consumed from Kafka topics:
++
+image::images/smm_bonus_track_2.png[width=800]
+
+
 === Run SQL queries in Flink
 
 . Connect to the terminal (ssh). You can connect using one of those options indicated in your environment information:

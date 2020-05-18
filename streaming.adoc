@@ -657,7 +657,7 @@ We use the same `nifi-sensor-data` producer group.
 +
 . Start _Publish to Kafka topic: iot_scored_ processor. Now your _Put to Kafka_ processor group should look like this:
 +
-image::images/put_to_kudu_updated.png[width=500]
+image::images/put_to_kudu_updated.png[width=800]
 +
 As you can see in the modified processor group, _Update health flag_ processor send data to _Publish to Kafka topic: iot_scored_ and _Write to Kudu_ processors.
 

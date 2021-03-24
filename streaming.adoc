@@ -644,7 +644,7 @@ image::images/connection_update_flag_to_publish_to_kafka.png[width=500]
 [source]
 ----
 Kafka Brokers:                         edge2ai-1.dim.local:9092
-Topic Name:                            iot_scored
+Topic Name:                            iot_enriched
 Record Reader:                         JsonTreeReader
 Record Writer:                         JsonRecordSetWriter
 Use Transactions:                      false
@@ -663,7 +663,7 @@ As you can see in the modified processor group, _Update health flag_ processor s
 
 === Review new topic in SMM
 
-. Make sure new _iot_scored_ topic is registered in SMM and data is flowing to it:
+. Make sure new _iot_enriched_ topic is registered in SMM and data is flowing to it:
 +
 image::images/smm_bonus_track_1.png[width=800]
 +
@@ -696,7 +696,7 @@ image::images/flink-sql-client_2.png[width=800]
 +
 [source,sql]
 ----
-CREATE TABLE sensors (sensor_id INT, sensor_ts BIGINT, is_healthy  INT, response STRING , sensor_0 DOUBLE,sensor_1 DOUBLE,sensor_3 DOUBLE, sensor_4 DOUBLE, sensor_5 DOUBLE, sensor_6 DOUBLE, sensor_7 DOUBLE, sensor_8 DOUBLE, sensor_9 DOUBLE, sensor_10 DOUBLE, sensor_11 DOUBLE, proc_time AS PROCTIME()) WITH ('connector.type' = 'kafka', 'connector.version' = 'universal', 'connector.topic' = 'iot_scored', 'connector.startup-mode' = 'latest-offset', 'connector.properties.bootstrap.servers' = 'edge2ai-1.dim.local:9092', 'format.type' = 'json');
+CREATE TABLE sensors (sensor_id INT, sensor_ts BIGINT, is_healthy  INT, response STRING , sensor_0 DOUBLE,sensor_1 DOUBLE,sensor_3 DOUBLE, sensor_4 DOUBLE, sensor_5 DOUBLE, sensor_6 DOUBLE, sensor_7 DOUBLE, sensor_8 DOUBLE, sensor_9 DOUBLE, sensor_10 DOUBLE, sensor_11 DOUBLE, proc_time AS PROCTIME()) WITH ('connector.type' = 'kafka', 'connector.version' = 'universal', 'connector.topic' = 'iot_enriched', 'connector.startup-mode' = 'latest-offset', 'connector.properties.bootstrap.servers' = 'edge2ai-1.dim.local:9092', 'format.type' = 'json');
 ----
 Make sure _sensors_ table is created:
 
